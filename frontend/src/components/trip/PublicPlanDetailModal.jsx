@@ -229,7 +229,7 @@ export default function PublicPlanDetailModal({ plan, onClose, onLikeUpdate, use
             </div>
             
             {/* Likes count */}
-            <button
+            {/* <button
               onClick={handleLike}
               disabled={liking}
               className="h-9 px-3.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all hover:scale-105 shrink-0"
@@ -246,7 +246,7 @@ export default function PublicPlanDetailModal({ plan, onClose, onLikeUpdate, use
             >
               <span>❤️</span>
               <span>{likes}</span>
-            </button>
+            </button> */}
           </div>
 
           {/* Share/Export Toolbar */}

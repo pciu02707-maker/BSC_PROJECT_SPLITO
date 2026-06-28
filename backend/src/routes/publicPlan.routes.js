@@ -10,8 +10,10 @@ const { protect } = require('../middleware/auth.middleware');
 // Public listing
 router.get('/', getPublicPlans);
 
-// Protected publishing and liking actions
+// Protected publishing actions
 router.post('/', protect, publishPlan);
-router.post('/:id/like', protect, likePlan);
+
+// Public liking action (anyone can like without accounts!)
+router.post('/:id/like', likePlan);
 
 module.exports = router;

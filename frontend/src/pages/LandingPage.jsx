@@ -202,9 +202,9 @@ export default function LandingPage() {
                       <span className="text-[10px] uppercase font-bold text-violet-300 tracking-wider">
                         {plan.destination || 'Unspecified'}
                       </span>
-                      <span className="text-xs flex items-center gap-1 text-rose-400">
+                      {/* <span className="text-xs flex items-center gap-1 text-rose-400">
                         ❤️ {plan.likes}
-                      </span>
+                      </span> */}
                     </div>
                     <h3 className="font-bold text-white text-base sm:text-lg mb-1 truncate" style={{ fontFamily: 'DM Sans, sans-serif' }}>
                       {plan.name}
