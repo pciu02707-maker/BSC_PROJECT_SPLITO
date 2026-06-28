@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import PublicPlanDetailModal from '../components/trip/PublicPlanDetailModal';
 
@@ -62,6 +63,7 @@ const features = [
 
 export default function LandingPage() {
   const { isClassic, toggleTheme } = useTheme();
+  const { user } = useAuth();
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -241,9 +243,23 @@ export default function LandingPage() {
       {selectedPlan && (
         <PublicPlanDetailModal
           plan={selectedPlan}
+          user={user}
           onClose={() => setSelectedPlan(null)}
-          onLikeUpdate={(planId, newLikes) => {
-            setPlans(p => p.map(x => x._id === planId ? { ...x, likes: newLikes } : x));
+          onLikeUpdate={(planId, newLikes, liked) => {
+            setPlans(p => p.map(x => {
+              if (x._id !== planId) return x;
+              const likedBy = [...(x.likedBy || [])];
+              const userId = user?._id;
+              if (liked) {
+                if (userId && !likedBy.some(id => (id?._id || id).toString() === userId.toString())) {
+                  likedBy.push(userId);
+                }
+              } else {
+                const idx = likedBy.findIndex(id => (id?._id || id).toString() === userId?.toString());
+                if (idx >= 0) likedBy.splice(idx, 1);
+              }
+              return { ...x, likes: newLikes, likedBy };
+            }));
           }}
         />
       )}
