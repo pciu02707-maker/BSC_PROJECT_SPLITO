@@ -165,7 +165,7 @@ export default function TripHeader({ trip, isHost, onTripUpdated, onTripDeleted,
               ) : (
                 <span className="text-base">📢</span>
               )}
-              <span>Share Plan</span>
+              {/* <span>Share Plan</span> */}
             </button>
             <button onClick={() => setShowExport(true)}
               className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
