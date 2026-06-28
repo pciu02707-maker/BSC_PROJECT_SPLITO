@@ -13,6 +13,8 @@ const {
   updateTripStatus,
   getTripBalances,
   getTripActivities,
+  getDeletedTrips,
+  restoreTrip,
 } = require('../controllers/trip.controller');
 const { protect } = require('../middleware/auth.middleware');
 
@@ -22,11 +24,13 @@ router.use(protect);
 router.get('/', getMyTrips);
 router.post('/', createTrip);
 router.post('/join', joinTrip);
+router.get('/trash', getDeletedTrips);
 
 router.get('/:id', getTripById);
 router.put('/:id', updateTrip);
 router.patch('/:id/itinerary', updateTripItinerary);
 router.delete('/:id', deleteTrip);
+router.patch('/:id/restore', restoreTrip);
 
 router.post('/:id/leave', leaveTrip);
 router.post('/:id/remove-member', removeMember);

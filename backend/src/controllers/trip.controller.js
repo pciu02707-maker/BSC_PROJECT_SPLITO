@@ -40,6 +40,7 @@ const getMyTrips = async (req, res, next) => {
   try {
     const trips = await Trip.find({
       'members.user': req.user._id,
+      isDeleted: { $ne: true },
     })
       .populate('host', 'name avatar email')
       .populate('members.user', 'name avatar email')
@@ -67,7 +68,7 @@ const getMyTrips = async (req, res, next) => {
 // ─── GET /api/trips/:id ───────────────────────────────────────────────────────
 const getTripById = async (req, res, next) => {
   try {
-    const trip = await Trip.findById(req.params.id)
+    const trip = await Trip.findOne({ _id: req.params.id, isDeleted: { $ne: true } })
       .populate('host', 'name avatar email')
       .populate('members.user', 'name avatar email')
       .populate('itinerary.days.stops.expense', 'title amount category');
@@ -213,11 +214,19 @@ const deleteTrip = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Only the host can delete this trip.' });
     }
 
-    await Expense.deleteMany({ trip: trip._id });
-    await Activity.deleteMany({ trip: trip._id });
-    await trip.deleteOne();
-
-    res.json({ success: true, message: 'Trip deleted successfully.' });
+    if (trip.isDeleted) {
+      // Hard delete
+      await Expense.deleteMany({ trip: trip._id });
+      await Activity.deleteMany({ trip: trip._id });
+      await trip.deleteOne();
+      res.json({ success: true, message: 'Trip permanently deleted.' });
+    } else {
+      // Soft delete
+      trip.isDeleted = true;
+      trip.deletedAt = Date.now();
+      await trip.save();
+      res.json({ success: true, message: 'Trip moved to Recycle Bin.' });
+    }
   } catch (err) {
     next(err);
   }
@@ -400,6 +409,55 @@ const getTripActivities = async (req, res, next) => {
   }
 };
 
+// ─── GET /api/trips/trash ─────────────────────────────────────────────────────
+const getDeletedTrips = async (req, res, next) => {
+  try {
+    const trips = await Trip.find({
+      host: req.user._id,
+      isDeleted: true,
+    })
+      .populate('host', 'name avatar email')
+      .populate('members.user', 'name avatar email')
+      .sort({ deletedAt: -1 });
+
+    // Attach expense count and total for each trip
+    const tripsWithStats = await Promise.all(
+      trips.map(async (trip) => {
+        const expenses = await Expense.find({ trip: trip._id });
+        const totalAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
+        return {
+          ...trip.toObject(),
+          expenseCount: expenses.length,
+          totalAmount: Math.round(totalAmount * 100) / 100,
+        };
+      })
+    );
+
+    res.json({ success: true, trips: tripsWithStats });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ─── PATCH /api/trips/:id/restore ─────────────────────────────────────────────
+const restoreTrip = async (req, res, next) => {
+  try {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if ((trip.host?._id || trip.host)?.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Only the host can restore this trip.' });
+    }
+
+    trip.isDeleted = false;
+    trip.deletedAt = null;
+    await trip.save();
+
+    res.json({ success: true, message: 'Trip restored successfully.', trip });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getMyTrips,
   getTripById,
@@ -413,4 +471,6 @@ module.exports = {
   updateTripStatus,
   getTripBalances,
   getTripActivities,
+  getDeletedTrips,
+  restoreTrip,
 };

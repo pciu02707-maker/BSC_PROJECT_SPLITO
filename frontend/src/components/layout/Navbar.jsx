@@ -5,7 +5,7 @@ import { useSocket } from '../../context/SocketContext';
 import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../common/Avatar';
 
-export default function Navbar({ action }) {
+export default function Navbar({ action, tripStatus }) {
   const { user, logout } = useAuth();
   const { connected } = useSocket();
   const { isClassic, toggleTheme } = useTheme();
@@ -26,7 +26,7 @@ export default function Navbar({ action }) {
   return (
     <nav className="sticky top-0 z-40 border-b"
       style={{ background:'var(--nav-bg)', backdropFilter:'blur(16px)', borderColor:'var(--nav-border)' }}>
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-3">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-3 relative">
 
         <div className="flex items-center gap-2">
           {/* Back button on trip pages (mobile) */}
@@ -45,6 +45,19 @@ export default function Navbar({ action }) {
             <span className="font-bold text-white hidden sm:block" style={{ fontFamily:'DM Sans,sans-serif' }}>Splito</span>
           </Link>
         </div>
+
+        {/* Center: Trip Status Badge */}
+        {isOnTrip && tripStatus && (
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <span className={`badge ${
+              tripStatus === 'active' ? 'badge-active' :
+              tripStatus === 'locked' ? 'badge-locked' :
+              tripStatus === 'closed' ? 'badge-closed' : 'badge-active'
+            } pointer-events-auto shrink-0 shadow-sm`}>
+              {tripStatus}
+            </span>
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           {action && <div className="flex items-center">{action}</div>}

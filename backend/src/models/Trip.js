@@ -68,6 +68,14 @@ const tripSchema = new mongoose.Schema(
       type: String,
       default: '#6366f1', // indigo default
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
     startDate: { type: Date },
     endDate: { type: Date },
     itinerary: {

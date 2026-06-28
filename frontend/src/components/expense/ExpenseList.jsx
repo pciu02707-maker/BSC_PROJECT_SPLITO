@@ -129,16 +129,16 @@ export default function ExpenseList({ expenses, members, isHost, tripActive, cur
                       {canEdit&&(
                         <div className="flex items-center gap-1.5 justify-end mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={()=>setEditing(expense)}
-                            className="text-xs font-semibold px-2 py-1 rounded-lg transition-all"
-                            style={{background:'rgba(191,101,77,0.14)',color:'#bf654d'}}>
-                            Edit
+                            className="h-8 px-3 rounded-xl text-xs font-semibold transition-all hover:bg-white/10 flex items-center gap-1"
+                            style={{ background:'rgba(25,30,15,0.06)', border:'1px solid rgba(25,30,15,0.1)', color:'rgba(25,30,15,0.6)' }}>
+                            <span>✏️</span> Edit
                           </button>
                           <button
                             disabled={deleting===expense._id}
                             onClick={()=>setConfirm({ expense, title:'Delete Expense', message:`Delete "${expense.title}"? This cannot be undone.`, variant:'danger', confirmText:'Delete' })}
-                            className="text-xs font-semibold px-2 py-1 rounded-lg transition-all"
-                            style={{background:'rgba(214,63,63,0.1)',color:'#d63f3f'}}>
-                            {deleting===expense._id?'...':'Del'}
+                            className="h-8 px-3 rounded-xl text-xs font-semibold transition-all hover:bg-white/10 flex items-center gap-1"
+                            style={{ background:'rgba(214,63,63,0.06)', border:'1px solid rgba(214,63,63,0.15)', color:'#d63f3f' }}>
+                            <span>🗑️</span> {deleting===expense._id?'...':'Delete'}
                           </button>
                         </div>
                       )}

@@ -9,6 +9,7 @@ import Avatar from '../components/common/Avatar';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import RecycleBinModal from '../components/trip/RecycleBinModal';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const [loading, setLoading]   = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin]     = useState(false);
+  const [showTrash, setShowTrash]   = useState(false);
   const [editingTrip, setEditingTrip] = useState(null);
   const [confirm, setConfirm]         = useState(null);
   const [pinnedTrips, setPinnedTrips] = useState(() => {
@@ -164,7 +166,10 @@ export default function DashboardPage() {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <button onClick={() => setShowTrash(true)} className="btn-secondary text-sm flex-1 sm:flex-none">
+              ♻️ <span className="hidden xs:inline">Recycle Bin</span>
+            </button>
             <button onClick={() => setShowJoin(true)} className="btn-secondary text-sm flex-1 sm:flex-none">
               🔗 <span className="hidden xs:inline">Join Trip</span>
             </button>
@@ -183,11 +188,13 @@ export default function DashboardPage() {
               { label:'Closed',         value:otherTrips.filter(t=>t.status==='closed').length,  icon:'✅', color:'rgba(228,139,107,0.12)' },
               { label:'Total Expenses', value:trips.reduce((s,t)=>s+(t.expenseCount||0),0),     icon:'💸', color:'rgba(245,158,11,0.12)' },
             ].map(s => (
-              <div key={s.label} className="card py-3 sm:py-4 text-center"
+              <div key={s.label} className="card py-2.5 sm:py-3.5 text-center"
                 style={{ background:s.color, borderColor:'rgba(25,30,15,0.07)' }}>
-                <div className="text-xl sm:text-2xl mb-1">{s.icon}</div>
-                <div className="text-lg sm:text-xl font-bold text-white" style={{ fontFamily:'DM Sans,sans-serif' }}>{s.value}</div>
-                <div className="text-[10px] sm:text-xs text-white/35 mt-0.5">{s.label}</div>
+                <div className="flex items-center justify-center gap-1.5 mb-0.5">
+                  <span className="text-lg sm:text-xl">{s.icon}</span>
+                  <span className="text-lg sm:text-xl font-bold text-white" style={{ fontFamily:'DM Sans,sans-serif' }}>{s.value}</span>
+                </div>
+                <div className="text-[10px] sm:text-xs text-white/35">{s.label}</div>
               </div>
             ))}
           </div>
@@ -257,6 +264,7 @@ export default function DashboardPage() {
 
       {showCreate && <CreateTripModal onClose={()=>setShowCreate(false)} onCreated={handleTripCreated} />}
       {showJoin   && <JoinTripModal  onClose={()=>setShowJoin(false)}   onJoined={handleTripJoined} />}
+      {showTrash  && <RecycleBinModal onClose={()=>setShowTrash(false)} onTripRestored={fetchTrips} />}
       {editingTrip && (
         <EditTripModal
           trip={editingTrip}

@@ -91,7 +91,7 @@ export default function TripPage() {
 
   if (loading) return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar tripStatus={trip?.status} />
       <div className="flex items-center justify-center h-64">
         <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
       </div>
@@ -106,7 +106,7 @@ export default function TripPage() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar tripStatus={trip?.status} />
       <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-20">
 
         <TripHeader
@@ -120,13 +120,13 @@ export default function TripPage() {
           style={{ background:'rgba(25,30,15,0.04)', border:'1px solid rgba(25,30,15,0.06)' }}>
           {TABS.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className="flex-1 flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200"
+              className="flex-1 flex items-center justify-center gap-1 px-1 xs:px-2 sm:px-3 py-2 rounded-xl text-[10px] xs:text-xs sm:text-sm font-semibold transition-all duration-200"
               style={activeTab===tab.id ? {
                 background:'linear-gradient(135deg,rgba(191,101,77,0.25),rgba(228,139,107,0.15))',
                 border:'1px solid rgba(191,101,77,0.3)', color:'#bf654d',
               } : { color:'rgba(25,30,15,0.35)' }}>
-              <span>{tab.icon}</span>
-              <span className="hidden xs:inline sm:inline">{tab.id}</span>
+              <span className="hidden sm:inline">{tab.icon}</span>
+              <span>{tab.id}</span>
             </button>
           ))}
         </div>

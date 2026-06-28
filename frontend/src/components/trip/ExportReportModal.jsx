@@ -13,6 +13,23 @@ const SOCIAL = [
     url:(text)=>`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(text)}` },
 ];
 
+const CATEGORY_LABELS = {
+  sightseeing: 'Sightseeing',
+  food: 'Food',
+  hotel: 'Hotel',
+  transport: 'Transport',
+  activity: 'Activity',
+  other: 'Other'
+};
+
+const formatTime = (time) => {
+  if (!time) return '';
+  const [hh, mm] = time.split(':');
+  const hour = Number(hh);
+  if (Number.isNaN(hour)) return time;
+  return `${hour % 12 || 12}:${mm || '00'} ${hour >= 12 ? 'PM' : 'AM'}`;
+};
+
 export default function ExportReportModal({ trip, expenses, balanceData, onClose }) {
   const [generating, setGenerating] = useState(false);
   const reportRef = useRef(null);
@@ -20,11 +37,28 @@ export default function ExportReportModal({ trip, expenses, balanceData, onClose
   const { settlements=[], summary=[], totalExpense=0 } = balanceData || {};
 
   const generateShareText = () => {
+    const tourDays = trip.itinerary?.days || [];
+    const tourPlanLines = tourDays.length > 0
+      ? [
+          `*Tour Plan (Itinerary):*`,
+          ...tourDays.map((day, idx) => {
+            const dateStr = day.date ? ` (${new Date(day.date).toLocaleDateString(undefined, {month:'short', day:'numeric'})})` : '';
+            const stopsStr = (day.stops || []).map(s => {
+              const timeStr = s.time ? `[${formatTime(s.time)}] ` : '';
+              return `  - ${timeStr}${s.name}`;
+            }).join('\n');
+            return `• Day ${idx + 1}: ${day.label}${dateStr}\n${stopsStr || '  - No stops'}`;
+          }),
+          ``
+        ]
+      : [];
+
     const lines = [
       `📊 *${trip.name} — Trip Report*`,
       `${trip.destination || 'N/A'}`,
       `💰 Total: ${trip.currency} ${totalExpense?.toLocaleString()}`,
       ``,
+      ...tourPlanLines,
       `*Settlements:*`,
       ...settlements.map(s => `• ${s.fromName} → ${s.toName}: ${trip.currency} ${s.amount?.toFixed(2)}`),
       ``,
@@ -183,6 +217,42 @@ export default function ExportReportModal({ trip, expenses, balanceData, onClose
         y += 8;
       });
       y += 8;
+
+      // ── Tour Plan ──
+      const days = trip.itinerary?.days || [];
+      if (days.length > 0) {
+        if (y > 220) { doc.addPage(); y = 20; }
+        doc.setFillColor(...purple);
+        doc.rect(margin, y, pageW-margin*2, 8, 'F');
+        doc.setTextColor(...white); doc.setFontSize(10); doc.setFont('helvetica','bold');
+        doc.text('TOUR PLAN (ITINERARY)', margin + 3, y + 5.5); y += 12;
+
+        days.forEach((day, dayIndex) => {
+          if (y > 255) { doc.addPage(); y = 20; }
+          const dateStr = day.date ? new Date(day.date).toLocaleDateString(undefined, {month:'short', day:'numeric'}) : '';
+          doc.setTextColor(...dark); doc.setFontSize(10); doc.setFont('helvetica','bold');
+          doc.text(`Day ${dayIndex + 1}: ${day.label}${dateStr ? ` (${dateStr})` : ''}`, margin, y);
+          y += 6;
+
+          const stops = day.stops || [];
+          if (!stops.length) {
+            doc.setTextColor(...gray); doc.setFontSize(9); doc.setFont('helvetica','italic');
+            doc.text('  - No stops planned', margin + 4, y);
+            y += 6;
+          } else {
+            stops.forEach(stop => {
+              if (y > 265) { doc.addPage(); y = 20; }
+              const timeStr = stop.time ? formatTime(stop.time) : 'Any time';
+              const catLabel = CATEGORY_LABELS[stop.category] || 'Other';
+              doc.setTextColor(...dark); doc.setFontSize(9); doc.setFont('helvetica','normal');
+              doc.text(`• [${timeStr}] ${stop.name} (${catLabel})`, margin + 4, y);
+              y += 5.5;
+            });
+          }
+          y += 3; // spacing between days
+        });
+        y += 5;
+      }
 
       // ── Expense List ──
       if (y > 220) { doc.addPage(); y = 20; }

@@ -217,8 +217,8 @@ export default function TourPlanPanel({ trip, expenses, tripActive, onTripUpdate
               const isOpen = openDays.has(dayKey) || !day._id;
               return (
                 <div key={dayKey} className="card p-0 overflow-hidden">
-                  <div className="w-full flex items-center justify-between gap-3 px-4 py-4 hover:bg-white/5 transition-all">
-                    <div onClick={() => toggleDay(dayKey)} className="flex flex-1 items-center gap-4 min-w-0 cursor-pointer">
+                  <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-4 hover:bg-white/5 transition-all">
+                    <div onClick={() => toggleDay(dayKey)} className="flex flex-1 items-center gap-4 min-w-0 cursor-pointer w-full">
                       <span className="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold text-white shrink-0"
                         style={{ background: 'var(--gradient-warm)' }}>
                         {dayIndex + 1}
@@ -228,22 +228,31 @@ export default function TourPlanPanel({ trip, expenses, tripActive, onTripUpdate
                         <span className="block text-xs text-white/35">{formatDate(day.date) || 'No date'} · {day.stops.length} stop{day.stops.length === 1 ? '' : 's'}</span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 shrink-0 w-full sm:w-auto mt-2.5 sm:mt-0">
                       {canEdit && (
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => openStopForm(dayIndex)} className="btn-secondary px-2.5 py-1 text-xs font-semibold flex items-center gap-1.5" title="Add Stop">
+                        <div className="flex items-center gap-1.5">
+                          <button onClick={() => openStopForm(dayIndex)}
+                            className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                            style={{ background:'rgba(25,30,15,0.06)', border:'1px solid rgba(25,30,15,0.1)', color:'rgba(25,30,15,0.6)' }}
+                            title="Add Stop">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
                             <span className="hidden sm:inline">Add Stop</span>
                           </button>
-                          <button onClick={() => openDayForm(day, dayIndex)} className="btn-secondary px-2.5 py-1 text-xs font-semibold flex items-center gap-1.5" title="Edit Day">
+                          <button onClick={() => openDayForm(day, dayIndex)}
+                            className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                            style={{ background:'rgba(25,30,15,0.06)', border:'1px solid rgba(25,30,15,0.1)', color:'rgba(25,30,15,0.6)' }}
+                            title="Edit Day">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                             <span className="hidden sm:inline">Edit</span>
                           </button>
-                          <button onClick={() => deleteDay(dayIndex)} className="btn-danger px-2.5 py-1 text-xs font-semibold flex items-center gap-1.5" title="Delete Day">
+                          <button onClick={() => deleteDay(dayIndex)}
+                            className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                            style={{ background:'rgba(214,63,63,0.06)', border:'1px solid rgba(214,63,63,0.15)', color:'#d63f3f' }}
+                            title="Delete Day">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
@@ -251,8 +260,11 @@ export default function TourPlanPanel({ trip, expenses, tripActive, onTripUpdate
                           </button>
                         </div>
                       )}
-                      <button onClick={() => toggleDay(dayKey)} className="text-xs text-white/35 hover:text-white transition-all px-2.5 py-1.5 flex items-center gap-1.5" title={isOpen ? "Collapse" : "Expand"}>
-                        <svg className={`w-4.5 h-4.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <button onClick={() => toggleDay(dayKey)}
+                        className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                        style={{ background:'rgba(25,30,15,0.06)', border:'1px solid rgba(25,30,15,0.1)', color:'rgba(25,30,15,0.6)' }}
+                        title={isOpen ? "Collapse" : "Expand"}>
+                        <svg className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                         <span>{isOpen ? 'Hide' : 'Show'}</span>
@@ -272,9 +284,9 @@ export default function TourPlanPanel({ trip, expenses, tripActive, onTripUpdate
                               {stop.completed ? '✓' : cat.icon}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex flex-wrap items-center gap-2">
+                              <div className="flex flex-wrap items-baseline gap-2">
                                 <h4 className={`text-sm font-bold transition-all ${stop.completed ? 'line-through text-white/40' : 'text-white'}`}>{stop.name}</h4>
-                                <span className="badge badge-closed">{cat.label}</span>
+                                <span className="text-xs font-semibold text-white/35">{cat.label}</span>
                               </div>
                               <div className={`text-xs mt-1 transition-all ${stop.completed ? 'text-white/20' : 'text-white/35'}`}>
                                 {formatTime(stop.time) || 'Any time'}
@@ -283,26 +295,37 @@ export default function TourPlanPanel({ trip, expenses, tripActive, onTripUpdate
                               {stop.notes && <p className={`text-xs mt-1 transition-all ${stop.completed ? 'text-white/25' : 'text-white/45'}`}>{stop.notes}</p>}
                             </div>
                             {canEdit && (
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1.5">
                                 <button onClick={() => toggleStopCompleted(dayIndex, stopIndex)}
-                                  className={`px-2.5 py-1 text-xs rounded-lg font-semibold border transition flex items-center gap-1.5 ${
-                                    stop.completed
-                                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                                      : 'btn-secondary'
-                                  }`}
+                                  className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                                  style={stop.completed ? {
+                                    background: 'rgba(16,185,129,0.06)',
+                                    border: '1px solid rgba(16,185,129,0.18)',
+                                    color: '#10b981'
+                                  } : {
+                                    background: 'rgba(25,30,15,0.06)',
+                                    border: '1px solid rgba(25,30,15,0.1)',
+                                    color: 'rgba(25,30,15,0.6)'
+                                  }}
                                   title={stop.completed ? "Mark Active" : "Mark Completed"}>
                                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                   </svg>
                                   <span className="hidden sm:inline">{stop.completed ? 'Done' : 'Complete'}</span>
                                 </button>
-                                <button onClick={() => openStopForm(dayIndex, stop, stopIndex)} className="btn-secondary px-2.5 py-1 text-xs flex items-center gap-1.5" title="Edit Stop">
+                                <button onClick={() => openStopForm(dayIndex, stop, stopIndex)}
+                                  className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                                  style={{ background: 'rgba(25,30,15,0.06)', border: '1px solid rgba(25,30,15,0.1)', color: 'rgba(25,30,15,0.6)' }}
+                                  title="Edit Stop">
                                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                   </svg>
                                   <span className="hidden sm:inline">Edit</span>
                                 </button>
-                                <button onClick={() => deleteStop(dayIndex, stopIndex)} className="btn-danger px-2.5 py-1 text-xs flex items-center gap-1.5" title="Delete Stop">
+                                <button onClick={() => deleteStop(dayIndex, stopIndex)}
+                                  className="h-9 px-4 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5"
+                                  style={{ background: 'rgba(214,63,63,0.06)', border: '1px solid rgba(214,63,63,0.15)', color: '#d63f3f' }}
+                                  title="Delete Stop">
                                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                   </svg>

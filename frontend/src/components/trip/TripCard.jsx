@@ -58,78 +58,31 @@ export default function TripCard({ trip, currentUserId, isPinned, onPin, onEdit,
         style={{ background:`radial-gradient(ellipse at top left,${trip.coverColor||'#bf654d'}12 0%,transparent 60%)` }} />
 
       <div className="relative pt-3">
-        <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h3 className="font-bold text-white group-hover:text-violet-200 transition-colors line-clamp-1 text-sm sm:text-base"
+        <div className="flex items-center justify-between gap-2 mb-1.5">
+          <h3 className="font-bold text-white group-hover:text-violet-200 transition-colors line-clamp-1 text-sm sm:text-base flex-1 min-w-0"
             style={{ fontFamily:'DM Sans,sans-serif' }}>
             {trip.name}
           </h3>
           <div className="flex items-center gap-1.5 shrink-0">
             {onPin && (
               <div className="flex items-center gap-1 z-20">
-                <button
+                 <button
                   type="button"
                   onClick={handlePinClick}
-                  className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-white/5 hover:bg-white/15 text-xs border border-white/5 ${
-                    isPinned ? 'bg-amber-500/20 border-amber-500/35 text-amber-300' : 'opacity-40 hover:opacity-100'
-                  }`}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center transition-all text-base shrink-0"
+                  style={isPinned ? {
+                    background: 'rgba(245,158,11,0.15)',
+                    border: '1px solid rgba(245,158,11,0.3)',
+                    color: '#fbbf24'
+                  } : {
+                    background: 'rgba(25,30,15,0.06)',
+                    border: '1px solid rgba(25,30,15,0.1)',
+                    color: 'rgba(25,30,15,0.6)'
+                  }}
                   title={isPinned ? "Unpin Trip" : "Pin Trip"}
                 >
                   📌
                 </button>
-                {isHost && onEdit && (
-                  <button
-                    type="button"
-                    onClick={handleEditClick}
-                    className="w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-white/5 hover:bg-white/15 text-xs border border-white/5 opacity-60 hover:opacity-100"
-                    title="Edit Trip"
-                  >
-                    ✏️
-                  </button>
-                )}
-                {isHost && (
-                  <>
-                    {trip.status === 'active' && onLock && (
-                      <button
-                        type="button"
-                        onClick={handleLockClick}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-white/5 hover:bg-white/15 text-xs border border-white/5 opacity-60 hover:opacity-100"
-                        title="Lock Trip"
-                      >
-                        🔒
-                      </button>
-                    )}
-                    {trip.status === 'locked' && onCloseTrip && (
-                      <button
-                        type="button"
-                        onClick={handleCloseClick}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-white/5 hover:bg-white/15 text-xs border border-white/5 opacity-60 hover:opacity-100"
-                        title="Close Trip"
-                      >
-                        ✅
-                      </button>
-                    )}
-                    {trip.status !== 'active' && onReopen && (
-                      <button
-                        type="button"
-                        onClick={handleReopenClick}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-white/5 hover:bg-white/15 text-xs border border-white/5 opacity-60 hover:opacity-100"
-                        title="Reopen Trip"
-                      >
-                        🔓
-                      </button>
-                    )}
-                  </>
-                )}
-                {isHost && onDelete && (
-                  <button
-                    type="button"
-                    onClick={handleDeleteClick}
-                    className="w-6 h-6 rounded-lg flex items-center justify-center transition-all bg-rose-500/10 border-rose-500/20 hover:bg-rose-500/25 text-xs text-rose-400"
-                    title="Delete Trip"
-                  >
-                    🗑️
-                  </button>
-                )}
               </div>
             )}
 
