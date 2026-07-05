@@ -31,7 +31,7 @@ function PayerChips({ payers, currency }) {
   );
 }
 
-export default function ExpenseList({ expenses, members, isHost, tripActive, currentUser, currency, onDeleted, onUpdated }) {
+export default function ExpenseList({ expenses, members, isHost, tripActive, currentUser, currency, hostName, onDeleted, onUpdated }) {
   const [editing,  setEditing]  = useState(null);
   const [confirm,  setConfirm]  = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -127,7 +127,7 @@ export default function ExpenseList({ expenses, members, isHost, tripActive, cur
                         <p className="text-[10px] text-white/25">{currency} {perPerson.toFixed(2)}/person</p>
                       )}
                       {canEdit&&(
-                        <div className="flex items-center gap-1.5 justify-end mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-1.5 justify-end mt-2">
                           <button onClick={()=>setEditing(expense)}
                             className="h-8 px-3 rounded-xl text-xs font-semibold transition-all hover:bg-white/10 flex items-center gap-1"
                             style={{ background:'rgba(25,30,15,0.06)', border:'1px solid rgba(25,30,15,0.1)', color:'rgba(25,30,15,0.6)' }}>
@@ -141,6 +141,11 @@ export default function ExpenseList({ expenses, members, isHost, tripActive, cur
                             <span>🗑️</span> {deleting===expense._id?'...':'Delete'}
                           </button>
                         </div>
+                      )}
+                      {!canEdit&&(
+                        <p className="text-[10px] text-white/30 mt-2 italic max-w-[160px] ml-auto leading-tight">
+                          {!tripActive ? '🔒 Trip is locked/closed' : `🔒 Only ${hostName || 'Host'} has access`}
+                        </p>
                       )}
                     </div>
                   </div>

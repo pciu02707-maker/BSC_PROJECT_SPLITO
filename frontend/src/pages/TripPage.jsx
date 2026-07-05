@@ -149,6 +149,7 @@ export default function TripPage() {
           {activeTab==='Expenses' && (
             <ExpenseList expenses={expenses} members={members} isHost={isHost}
               tripActive={tripActive} currentUser={user} currency={trip?.currency}
+              hostName={trip?.host?.name}
               onDeleted={eid => setExpenses(p => p.filter(e => e._id!==eid))}
               onUpdated={u => setExpenses(p => p.map(e => e._id===u._id ? u : e))} />
           )}
