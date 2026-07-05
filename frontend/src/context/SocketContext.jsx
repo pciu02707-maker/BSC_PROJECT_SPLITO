@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
@@ -6,47 +6,59 @@ const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
   const { token } = useAuth();
-  const socketRef = useRef(null);
+  const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setSocket(null);
+      setConnected(false);
+      return;
+    }
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+    const s = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
       auth: { token },
       transports: ['websocket'],
     });
 
-    socket.on('connect', () => {
+    s.on('connect', () => {
       setConnected(true);
       console.log('🔌 Socket connected');
     });
 
-    socket.on('disconnect', () => {
+    s.on('disconnect', () => {
       setConnected(false);
       console.log('🔌 Socket disconnected');
     });
 
-    socketRef.current = socket;
+    setSocket(s);
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      s.disconnect();
+      setSocket(null);
+      setConnected(false);
     };
   }, [token]);
 
-  const joinTrip = (tripId) => socketRef.current?.emit('join:trip', tripId);
-  const leaveTrip = (tripId) => socketRef.current?.emit('leave:trip', tripId);
+  const joinTrip = useCallback((tripId) => {
+    socket?.emit('join:trip', tripId);
+  }, [socket]);
 
-  const on = (event, handler) => {
-    socketRef.current?.on(event, handler);
-    return () => socketRef.current?.off(event, handler);
-  };
+  const leaveTrip = useCallback((tripId) => {
+    socket?.emit('leave:trip', tripId);
+  }, [socket]);
 
-  const off = (event, handler) => socketRef.current?.off(event, handler);
+  const on = useCallback((event, handler) => {
+    socket?.on(event, handler);
+    return () => socket?.off(event, handler);
+  }, [socket]);
+
+  const off = useCallback((event, handler) => {
+    socket?.off(event, handler);
+  }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ connected, joinTrip, leaveTrip, on, off, socket: socketRef.current }}>
+    <SocketContext.Provider value={{ connected, joinTrip, leaveTrip, on, off, socket }}>
       {children}
     </SocketContext.Provider>
   );

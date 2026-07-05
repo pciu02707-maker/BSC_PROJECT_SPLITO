@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const VARIANTS = {
   danger:  { gradient: 'linear-gradient(135deg,#d63f3f,#bd3434)', glow: 'rgba(214,63,63,0.24)',  bg: 'rgba(214,63,63,0.1)',  border: 'rgba(214,63,63,0.2)',  icon: '🗑️' },
@@ -15,7 +16,7 @@ export default function ConfirmDialog({ title, message, confirmText='Confirm', c
     return () => window.removeEventListener('keydown', h);
   }, [onCancel]);
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div className="absolute inset-0 anim-fade-in" onClick={onCancel}
         style={{ background:'rgba(61,49,40,0.28)', backdropFilter:'blur(8px)' }} />
@@ -46,6 +47,7 @@ export default function ConfirmDialog({ title, message, confirmText='Confirm', c
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

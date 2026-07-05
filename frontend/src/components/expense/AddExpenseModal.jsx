@@ -101,6 +101,7 @@ export default function AddExpenseModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     const titleToUse = form.title.trim() || "Expense";
     if (!totalAmt || totalAmt <= 0)
       return toast.error("Valid amount required.");

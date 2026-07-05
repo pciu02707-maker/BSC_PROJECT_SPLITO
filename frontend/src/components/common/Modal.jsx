@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTheme } from '../../context/ThemeContext';
 
 export default function Modal({ title, onClose, children, size = 'md' }) {
@@ -13,7 +14,7 @@ export default function Modal({ title, onClose, children, size = 'md' }) {
 
   const maxW = size === 'lg' ? 'max-w-2xl' : 'max-w-md';
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 anim-fade-in" onClick={onClose}
         style={{
@@ -40,6 +41,7 @@ export default function Modal({ title, onClose, children, size = 'md' }) {
         </div>
         <div className="p-5">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

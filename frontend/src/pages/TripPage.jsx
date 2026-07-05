@@ -25,7 +25,7 @@ export default function TripPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { joinTrip, leaveTrip, on } = useSocket();
+  const { connected, joinTrip, leaveTrip, on } = useSocket();
 
   const [trip, setTrip]             = useState(null);
   const [expenses, setExpenses]     = useState([]);
@@ -68,14 +68,19 @@ export default function TripPage() {
 
   useEffect(() => {
     fetchAll();
-    joinTrip(id);
-    return () => leaveTrip(id);
-  }, [id]);
+  }, [id, fetchAll]);
+
+  useEffect(() => {
+    if (connected && id) {
+      joinTrip(id);
+      return () => leaveTrip(id);
+    }
+  }, [id, connected, joinTrip, leaveTrip]);
 
   // Socket events
   useEffect(() => {
     const offs = [
-      on('expense:added',   ({ expense }) => { setExpenses(p => [expense, ...p]); refreshBalances(); }),
+      on('expense:added',   ({ expense }) => { setExpenses(p => p.some(e => e._id===expense._id) ? p : [expense, ...p]); refreshBalances(); }),
       on('expense:updated', ({ expense }) => { setExpenses(p => p.map(e => e._id===expense._id ? expense : e)); refreshBalances(); }),
       on('expense:deleted', ({ expenseId }) => { setExpenses(p => p.filter(e => e._id!==expenseId)); refreshBalances(); }),
       on('member:joined',   () => fetchAll()),
@@ -175,7 +180,7 @@ export default function TripPage() {
         <AddExpenseModal
           trip={trip} members={members} currentUser={user}
           onClose={() => setShowAdd(false)}
-          onAdded={exp => { setExpenses(p => [exp,...p]); setShowAdd(false); refreshBalances(); }} />
+          onAdded={exp => { setExpenses(p => p.some(e => e._id===exp._id) ? p : [exp,...p]); setShowAdd(false); refreshBalances(); }} />
       )}
     </div>
   );
